@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 200" role="img" aria-label="wanted logo">
+  <title>wanted</title>
+  <style>
+    @font-face{
+      font-family:"ManropeLocal";
+      src:url("./Manrope-VariableFont_wght.ttf") format("truetype");
+      font-weight:200 800;
+      font-style:normal;
+      font-display:swap;
+    }
+    .wordmark{
+      font-family:"ManropeLocal", Manrope, Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      font-weight:800;
+      font-size:120px;
+      fill:#00D0BF;
+      letter-spacing:1px;
+    }
+  </style>
+
+  <!-- Слово -->
+  <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" class="wordmark">wanted</text>
+
+  <!-- Точка над "a" с более быстрой анимацией -->
+  <circle cx="352" cy="62" r="12" fill="#00D0BF">
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 0 -6; 0 0" dur="1s" repeatCount="indefinite"
+      keyTimes="0;0.5;1" calcMode="spline"
+      keySplines=".25 .1 .25 1; .25 .1 .25 1"/>
+  </circle>
+</svg>
