@@ -1,0 +1,49 @@
+name: Update job/post counters
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # каждые 30 минут
+  workflow_dispatch:         # ручной запуск из вкладки Actions
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Compute counters (user:Wanted-ooo)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          HDRS="-H 'Authorization: Bearer ${GH_TOKEN}' -H 'Accept: application/vnd.github+json'"
+
+          echo "🔎 user:Wanted-ooo in:name job"
+          JOBS=$(bash -lc "curl -s https://api.github.com/search/repositories?q=user:Wanted-ooo+in:name+job ${HDRS} | jq -r .total_count")
+          echo "🔎 user:Wanted-ooo in:name post"
+          POSTS=$(bash -lc "curl -s https://api.github.com/search/repositories?q=user:Wanted-ooo+in:name+post ${HDRS} | jq -r .total_count")
+
+          mkdir -p badges
+          cat > badges/job-count.json <<JSON
+          { "schemaVersion": 1, "label": "💼 Открытые вакансии", "message": "${JOBS:-0}", "color": "00D0BF" }
+          JSON
+          cat > badges/post-count.json <<JSON
+          { "schemaVersion": 1, "label": "📝 Полезные посты", "message": "${POSTS:-0}", "color": "00D0BF" }
+          JSON
+
+          echo "✅ job-count.json:"  && cat badges/job-count.json
+          echo "✅ post-count.json:" && cat badges/post-count.json
+
+      - name: Commit & Push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add badges/job-count.json badges/post-count.json
+          git commit -m "chore: update job/post counters" || echo "No changes"
+          git push
